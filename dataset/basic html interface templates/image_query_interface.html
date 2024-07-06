@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Query Interface</title>
+</head>
+<body>
+    <h1>Image Query Interface</h1>
+    <form id="imageQueryForm" enctype="multipart/form-data">
+        <label for="image">Upload image:</label><br>
+        <input type="file" id="image" name="image"><br><br>
+        <button type="submit">Submit</button>
+    </form>
+    <div id="imageResults">
+        <!-- Results will be displayed here -->
+    </div>
+
+    <script>
+        // JavaScript to handle image upload and fetch results from backend
+        document.getElementById("imageQueryForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const formData = new FormData();
+            const fileInput = document.getElementById("image");
+            formData.append("image", fileInput.files[0]);
+
+            fetch('/image_query', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display results
+                const imageResultsDiv = document.getElementById("imageResults");
+                imageResultsDiv.innerHTML = `<p><strong>Predicted Label:</strong> ${data.predicted_label}</p>
+                                            <p><strong>Matching Products:</strong></p>
+                                            <ul>
+                                                ${data.matching_products.map(product => `<li>${product}</li>`).join('')}
+                                            </ul>`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>

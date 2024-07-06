@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Image Upload Interface</title>
+</head>
+<body>
+    <h1>Product Image Upload Interface</h1>
+    <form id="productImageForm" enctype="multipart/form-data">
+        <label for="productImage">Upload product image:</label><br>
+        <input type="file" id="productImage" name="productImage"><br><br>
+        <button type="submit">Submit</button>
+    </form>
+    <div id="productImageResults">
+        <!-- Results will be displayed here -->
+    </div>
+
+    <script>
+        // JavaScript to handle product image upload and fetch results from backend
+        document.getElementById("productImageForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const formData = new FormData();
+            const fileInput = document.getElementById("productImage");
+            formData.append("productImage", fileInput.files[0]);
+
+            fetch('/product_image_upload', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display results
+                const productImageResultsDiv = document.getElementById("productImageResults");
+                productImageResultsDiv.innerHTML = `<p><strong>Product Description:</strong> ${data.product_description}</p>
+                                                   <p><strong>Matching Products:</strong></p>
+                                                   <ul>
+                                                       ${data.matching_products.map(product => `<li>${product}</li>`).join('')}
+                                                   </ul>`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>

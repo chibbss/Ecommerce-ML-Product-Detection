@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Query Interface</title>
+</head>
+<body>
+    <h1>Text Query Interface</h1>
+    <form id="textQueryForm">
+        <label for="query">Enter your text query:</label><br>
+        <input type="text" id="query" name="query"><br><br>
+        <button type="submit">Submit</button>
+    </form>
+    <div id="results">
+        <!-- Results will be displayed here -->
+    </div>
+
+    <script>
+        // JavaScript to handle form submission and fetch results from backend
+        document.getElementById("textQueryForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const query = document.getElementById("query").value;
+            fetch('/text_query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query: query }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display results
+                const resultsDiv = document.getElementById("results");
+                resultsDiv.innerHTML = `<p><strong>Product Matches:</strong> ${data.product_matches}</p>
+                                        <p><strong>Natural Language Response:</strong> ${data.natural_language_response}</p>`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
